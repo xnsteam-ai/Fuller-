@@ -1,8 +1,8 @@
 feature,area,priority,original,clone,notes
 Google sign-in,auth,must,yes,no,
-Text prompt to UI,generate,must,yes,no,Gemini via user's Google Cloud
+Text prompt to UI,generate,must,yes,partial,mock provider works; Gemini adapter written but untested against live API
 Image/sketch to UI,generate,should,yes,no,
-Mobile and web device target,generate,must,yes,no,
+Mobile and web device target,generate,must,yes,partial,toggle sent to provider; web layout not tuned
 Up to 5 connected screens,generate,should,yes,no,
 Follow-up prompt refinement,edit,must,yes,no,
 Direct manual edits,edit,should,yes,no,
@@ -16,5 +16,5 @@ Figma paste,export,skip,yes,no,Proprietary clipboard format
 Other frameworks (Vue Angular Flutter SwiftUI),export,could,yes,no,
 MCP server,integration,could,yes,no,
 Monthly usage limits,billing,should,yes,no,350 and 50 per month in original
-Project list,projects,must,yes,no,
-No horizontal scroll at 320px+,mobile,must,n/a,no,User requirement
+Project list,projects,must,yes,partial,localStorage fake data layer
+No horizontal scroll at 320px+,mobile,must,n/a,yes,Playwright checks 320/360/390/430 on S01 S02 S04 S13
