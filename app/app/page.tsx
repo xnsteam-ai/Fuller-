@@ -4,10 +4,16 @@ import { useEffect, useState } from 'react';
 import { Shell } from '@/components/Shell';
 import { listProjects } from '@/lib/store';
 import type { Project } from '@/lib/types';
+import { supabaseConfigured } from '@/lib/supabase/config';
 
 export default function Home() {
   const [projects, setProjects] = useState<Project[] | null>(null);
-  useEffect(() => setProjects(listProjects()), []);
+  useEffect(() => {
+    if (!supabaseConfigured) { setProjects(listProjects()); return; }
+    fetch('/api/projects').then((r) => (r.ok ? r.json() : { projects: [] })).then((d) =>
+      setProjects((d.projects ?? []).map((x: any) => ({ id: x.id, name: x.name, device: x.device, prompt: '', updatedAt: Date.parse(x.updated_at), screens: Array(x.screens?.[0]?.count ?? 0).fill(null) }))),
+    ).catch(() => setProjects([]));
+  }, []);
   return (
     <Shell title="Projects" tab="projects">
       {projects === null && <div className="h-24 animate-pulse rounded-lg bg-surface" aria-label="Loading projects" />}

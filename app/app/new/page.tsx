@@ -1,8 +1,9 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Shell } from '@/components/Shell';
 import { saveProject } from '@/lib/store';
+import { supabaseConfigured } from '@/lib/supabase/config';
 import type { Device } from '@/lib/types';
 
 const MAX = 4000;
@@ -12,6 +13,7 @@ export default function NewProject() {
   const [prompt, setPrompt] = useState('');
   const [device, setDevice] = useState<Device>('mobile');
   const [busy, setBusy] = useState(false);
+  const keyRef = useRef(crypto.randomUUID());
   const [error, setError] = useState('');
   const over = prompt.length > MAX;
 
@@ -20,14 +22,16 @@ export default function NewProject() {
     if (!prompt.trim() || over || busy) return;
     setBusy(true); setError('');
     try {
-      const res = await fetch('/api/generate', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ prompt, device, mode: 'standard' }) });
+      const res = await fetch('/api/generate', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ prompt, device, mode: 'standard', idempotencyKey: keyRef.current }) });
       const data = await res.json();
+      if (res.status === 401) { router.push('/sign-in'); return; }
       if (!res.ok) throw new Error(data.error || 'Generation failed.');
+      if (supabaseConfigured) { router.push(`/p/${data.projectId}`); return; }
       const id = crypto.randomUUID();
       saveProject({ id, name: prompt.trim().slice(0, 50), device, prompt, screens: data.screens, updatedAt: Date.now() });
       router.push(`/p/${id}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong.'); setBusy(false);
+      setError(err instanceof Error ? err.message : 'Something went wrong.'); setBusy(false); keyRef.current = crypto.randomUUID();
     }
   }
 

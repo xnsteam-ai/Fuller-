@@ -4,11 +4,15 @@ import { Shell } from '@/components/Shell';
 import { PreviewFrame } from '@/components/PreviewFrame';
 import { getProject } from '@/lib/store';
 import type { Project } from '@/lib/types';
+import { supabaseConfigured } from '@/lib/supabase/config';
 
 export default function Canvas({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [project, setProject] = useState<Project | null | undefined>(undefined);
-  useEffect(() => setProject(getProject(id) ?? null), [id]);
+  useEffect(() => {
+    if (!supabaseConfigured) { setProject(getProject(id) ?? null); return; }
+    fetch(`/api/projects/${id}`).then((r) => (r.ok ? r.json() : null)).then((d) => setProject(d?.project ?? null)).catch(() => setProject(null));
+  }, [id]);
   return (
     <Shell title={project?.name ?? 'Design'} back="/">
       {project === undefined && <div className="h-64 animate-pulse rounded-lg bg-surface" />}
