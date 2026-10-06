@@ -1,5 +1,5 @@
 feature,area,priority,original,clone,notes
-Google sign-in,auth,must,yes,no,
+Google sign-in,auth,must,yes,partial,Supabase Google OAuth wired; not run live (no credentials)
 Text prompt to UI,generate,must,yes,partial,"real Gemini call written, not run live"
 Image/sketch to UI,generate,should,yes,partial,"attach PNG/JPEG/WebP up to 3 MB, sent inline; not run live"
 Mobile and web device target,generate,must,yes,partial,toggle sent to provider; web layout not tuned
@@ -12,7 +12,7 @@ Voice critique,voice,could,yes,partial,browser speech-to-text fills the prompt; 
 DESIGN.md design system,design system,should,yes,partial,"generate, edit, save, export; new generations do not yet read it"
 Export HTML/CSS,export,must,yes,partial,one HTML file with all screens; not tested against real data
 Export Tailwind,export,should,yes,no,
-Figma paste,export,skip,yes,no,Proprietary clipboard format
+Figma paste,export,could,yes,skip,Proprietary clipboard format
 Other frameworks (Vue Angular Flutter SwiftUI),export,could,yes,no,
 MCP server,integration,could,yes,no,
 Monthly usage limits,billing,should,yes,partial,usage page + atomic quota in DB; not run live
