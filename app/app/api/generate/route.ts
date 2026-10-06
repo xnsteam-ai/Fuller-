@@ -1,31 +1,31 @@
 import { NextResponse } from 'next/server';
 import { getProvider, aiConfigured } from '@/lib/ai/provider';
 import { sanitizeScreen } from '@/lib/sanitize';
+import { limited } from '@/lib/rate';
+import { parseMode, groupOf, limitOf } from '@/lib/api';
 import { supabaseConfigured } from '@/lib/supabase/config';
 import { supabaseServer, supabaseAdmin } from '@/lib/supabase/server';
 
 export const maxDuration = 60;
 
-// In-memory limiter: slice only. Real metering is consume_quota() in replica/schema.sql once Supabase is wired.
-const hits = new Map<string, number[]>();
-function limited(ip: string) {
-  const now = Date.now();
-  const list = (hits.get(ip) ?? []).filter((t) => now - t < 60_000);
-  list.push(now); hits.set(ip, list);
-  return list.length > 10;
-}
-
 export async function POST(req: Request) {
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0] ?? 'local';
-  if (limited(ip)) return NextResponse.json({ error: 'Too many requests. Wait a minute and try again.' }, { status: 429 });
+  if (limited(`gen:${ip}`)) return NextResponse.json({ error: 'Too many requests. Wait a minute and try again.' }, { status: 429 });
   let body: any;
   try { body = await req.json(); } catch { return NextResponse.json({ error: 'Invalid request' }, { status: 400 }); }
   const prompt = typeof body?.prompt === 'string' ? body.prompt.trim() : '';
   if (!prompt || prompt.length > 4000) return NextResponse.json({ error: 'Describe your screen in 1 to 4000 characters.' }, { status: 400 });
   const device = body?.device === 'web' ? 'web' : 'mobile';
-  const mode = ['ideate', 'flash', 'standard', 'thinking'].includes(body?.mode) ? body.mode : 'standard';
-  const group = mode === 'standard' ? 'standard' : 'experimental';
-  const limit = Number(group === 'standard' ? process.env.QUOTA_STANDARD ?? 350 : process.env.QUOTA_EXPERIMENTAL ?? 50);
+  const mode = parseMode(body?.mode);
+  const group = groupOf(mode);
+  const limit = limitOf(group);
+  let image: { mime: string; data: string } | undefined;
+  if (body?.image) {
+    const { mime, data } = body.image;
+    if (!['image/png', 'image/jpeg', 'image/webp'].includes(mime) || typeof data !== 'string' || data.length > 4_000_000 || !/^[A-Za-z0-9+/=]+$/.test(data))
+      return NextResponse.json({ error: 'Use a PNG, JPEG or WebP image under 3 MB.' }, { status: 400 });
+    image = { mime, data };
+  }
 
   if (!supabaseConfigured || !process.env.SUPABASE_SERVICE_ROLE_KEY || !aiConfigured())
     return NextResponse.json({ error: 'The service is not configured yet.' }, { status: 503 });
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
     projectId = project.id;
     const { data: gen, error: gErr } = await admin.from('generations').insert({ user_id: user.id, project_id: projectId, idempotency_key: key, mode, prompt, status: 'running' }).select('id').single();
     if (gErr || !gen) throw new Error('generation insert failed');
-    const raw = await getProvider().generate({ prompt, device, mode });
+    const raw = await getProvider().generate({ prompt, device, mode, image });
     for (let i = 0; i < raw.length; i++) {
       const { data: screen, error: sErr } = await admin.from('screens').insert({ user_id: user.id, project_id: projectId, position: i, title: raw[i].title.slice(0, 60) }).select('id').single();
       if (sErr || !screen) throw new Error('screen insert failed');

@@ -1,20 +1,20 @@
 feature,area,priority,original,clone,notes
 Google sign-in,auth,must,yes,no,
-Text prompt to UI,generate,must,yes,partial,mock provider works; Gemini adapter written but untested against live API
-Image/sketch to UI,generate,should,yes,no,
+Text prompt to UI,generate,must,yes,partial,"real Gemini call written, not run live"
+Image/sketch to UI,generate,should,yes,partial,"attach PNG/JPEG/WebP up to 3 MB, sent inline; not run live"
 Mobile and web device target,generate,must,yes,partial,toggle sent to provider; web layout not tuned
-Up to 5 connected screens,generate,should,yes,no,
-Follow-up prompt refinement,edit,must,yes,no,
-Direct manual edits,edit,should,yes,no,
-Variants,edit,could,yes,no,
-Mode picker (4 modes),generate,could,yes,no,
-Voice critique,voice,could,yes,no,
-DESIGN.md design system,design system,should,yes,no,
-Export HTML/CSS,export,must,yes,no,
+Up to 5 connected screens,generate,should,yes,partial,model asked for 1-5 screens; consistency not verified live
+Follow-up prompt refinement,edit,must,yes,partial,route + UI built; not run live
+Direct manual edits,edit,should,yes,partial,text-only editing; no colour or spacing editing
+Variants,edit,could,yes,partial,"3 variants, pick one; not run live"
+Mode picker (4 modes),generate,could,yes,partial,maps to Gemini model env vars; not run live
+Voice critique,voice,could,yes,partial,browser speech-to-text fills the prompt; no spoken replies
+DESIGN.md design system,design system,should,yes,partial,"generate, edit, save, export; new generations do not yet read it"
+Export HTML/CSS,export,must,yes,partial,one HTML file with all screens; not tested against real data
 Export Tailwind,export,should,yes,no,
 Figma paste,export,skip,yes,no,Proprietary clipboard format
 Other frameworks (Vue Angular Flutter SwiftUI),export,could,yes,no,
 MCP server,integration,could,yes,no,
-Monthly usage limits,billing,should,yes,no,350 and 50 per month in original
-Project list,projects,must,yes,partial,localStorage fake data layer
+Monthly usage limits,billing,should,yes,partial,usage page + atomic quota in DB; not run live
+Project list,projects,must,yes,partial,Supabase-backed; rename and delete built; not run live
 No horizontal scroll at 320px+,mobile,must,n/a,yes,Playwright checks 320/360/390/430 on S01 S02 S04 S13

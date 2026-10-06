@@ -7,7 +7,7 @@ export const test = base.extend({
     const ip = `10.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
     await page.setExtraHTTPHeaders({ 'x-forwarded-for': ip });
     const problems: string[] = [];
-    page.on('console', (m) => { if (m.type() === 'error' && !/status of (501|503)/.test(m.text())) problems.push(`console: ${m.text()}`); });
+    page.on('console', (m) => { if (m.type() === 'error' && !/status of (401|402|409|429|501|503)/.test(m.text())) problems.push(`console: ${m.text()}`); });
     page.on('pageerror', (e) => problems.push(`pageerror: ${e.message}`));
     page.on('response', (r) => { if (r.status() === 404) problems.push(`404: ${r.url()}`); if (r.status() >= 500 && ![501, 503].includes(r.status())) problems.push(`5xx: ${r.status()} ${r.url()}`); });
     await use(page);
