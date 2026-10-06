@@ -16,11 +16,11 @@ Run 2026-10-06 on branch `claude/optimistic-brown-p55uke`. No host, domain, acco
 | check | result |
 | --- | --- |
 | No open S1 or S2 bugs | **cannot say**: the real routes have never run. Data isolation between two users is untested. Treat as an open S1 until tested |
-| Privacy policy and terms pages | **missing** |
+| Privacy policy and terms pages | **drafted** at `/privacy` and `/terms`, marked draft in the page. Placeholders remain for the host name and a contact email. Needs a lawyer's review |
 | Cookie banner | not needed yet (no analytics or non-essential cookies), re-check when analytics is added |
-| Account deletion | **missing** (the schema cascades on user delete, but no button or route) |
+| Account deletion | **built** (`/account`, `DELETE /api/account`, typed confirmation, FK cascades checked in the migration). **Not run against a real database** |
 | Sign out | present |
-| Favicon, titles, OG image | favicon and titles done; the icon is a placeholder; **no OG image** |
+| Favicon, titles, OG image | favicon and titles done; the icon is a placeholder; OG image built (`/opengraph-image`, 1200x630 PNG, tested) |
 | Name cleared | **no**: trademark, domain and handle checks all "to run" (`replica/brand.md`) |
 | Error tracking, uptime, analytics | **none installed** |
 | Rate limiting | in-memory, one instance only; replace before running more than one server |
@@ -59,3 +59,6 @@ Pick one canonical host (apex or www) and redirect the other. Check HTTPS.
 
 ## Go decision
 Not asked, because the preflight fails. When blockers 1 to 6 are done I will re-run this and ask for your explicit go before anything goes live.
+
+## Update (later run)
+Closed without credentials: privacy and terms drafts, account deletion, OG image. Playwright is now 45 of 45. Still open: live tests, two-user isolation, parity must-haves, name clearance, cost cap, error tracking, and filling the two placeholders in the legal pages.

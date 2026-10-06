@@ -21,6 +21,7 @@ export default function Usage() {
       {state === 'loading' && <div className="h-24 animate-pulse rounded-lg bg-surface" aria-label="Loading usage" />}
       {state === 'signin' && <p className="rounded-md border border-border bg-surface p-4">Sign in to see your usage. <Link href="/sign-in" className="font-semibold text-accent underline">Sign in</Link></p>}
       {state === 'error' && <p role="alert" className="rounded-md border border-danger p-4 text-danger">Could not load usage. Try again.</p>}
+      <p className="mt-6"><Link href="/account" className="flex min-h-tap items-center font-semibold text-accent underline">Account, privacy and terms</Link></p>
       {u && (
         <div className="grid gap-5">
           <UsageMeter label="Standard allowance" used={u.standard.used} limit={u.standard.limit} />

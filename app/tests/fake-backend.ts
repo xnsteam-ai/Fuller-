@@ -14,6 +14,7 @@ export function makeState() {
     calls: [] as { method: string; url: string; body: any }[],
     failNext: null as null | { status: number; error: string },
     deleted: false,
+    accountDeleted: false,
   };
 }
 
@@ -26,6 +27,7 @@ export async function installFake(page: Page, st = makeState()) {
     if (st.failNext && m !== 'GET') { const f = st.failNext; st.failNext = null; return json({ error: f.error }, f.status); }
     const cur = (sid: string) => st.versions[sid].find((v) => v.version === st.current[sid])!;
     let r: RegExpMatchArray | null;
+    if (path === '/api/account' && m === 'DELETE') { if (body?.confirm !== 'DELETE') return json({ error: 'Type DELETE to confirm.' }, 400); st.accountDeleted = true; return json({ ok: true }); }
     if (path === '/api/generate') return json({ projectId: 'p1' });
     if (path === '/api/usage') return json({ month: '2026-10-01', ...st.usage });
     if (path === '/api/projects') return json({ projects: st.deleted ? [] : [{ id: 'p1', name: st.project.name, device: 'mobile', updated_at: st.project.updated_at, screens: [{ count: 2 }] }] });

@@ -186,7 +186,7 @@ for (const w of widths) {
   test(`no horizontal scroll on every screen at ${w}px`, async ({ page }) => {
     await installFake(page);
     await page.setViewportSize({ width: w, height: 800 });
-    for (const path of ['/', '/new', '/usage', '/p/p1', '/p/p1/s/s1', '/p/p1/design', '/p/p1/export']) {
+    for (const path of ['/', '/new', '/usage', '/account', '/privacy', '/terms', '/p/p1', '/p/p1/s/s1', '/p/p1/design', '/p/p1/export']) {
       await page.goto(path); await page.waitForLoadState('networkidle'); await noHScroll(page, path);
     }
     await page.goto('/p/p1/s/s1');
@@ -198,7 +198,7 @@ for (const w of widths) {
 
 test('axe: no WCAG A/AA violations on the new screens', async ({ page }) => {
   await installFake(page);
-  for (const path of ['/', '/usage', '/p/p1', '/p/p1/s/s1', '/p/p1/design', '/p/p1/export']) {
+  for (const path of ['/', '/usage', '/account', '/privacy', '/terms', '/p/p1', '/p/p1/s/s1', '/p/p1/design', '/p/p1/export']) {
     await page.goto(path); await page.waitForLoadState('networkidle');
     const r = await new AxeBuilder({ page }).exclude('iframe').withTags(['wcag2a', 'wcag2aa']).analyze(); // iframes hold generated content, sandboxed
     expect(r.violations.map((v) => `${path}: ${v.id} -> ${v.nodes[0]?.html?.slice(0, 80)}`), path).toEqual([]);
@@ -233,4 +233,35 @@ test('S02 without a design system, none is sent', async ({ page }) => {
   await page.getByRole('button', { name: 'Generate' }).click();
   await page.waitForURL('/p/p1');
   expect(st.calls.find((x) => x.url === '/api/generate')!.body.designMd).toBeUndefined();
+});
+
+test('account deletion needs the typed confirmation, then leaves', async ({ page }) => {
+  const st = await installFake(page);
+  await page.goto('/account');
+  await page.getByRole('button', { name: 'Delete my account' }).click();
+  const go = page.getByRole('button', { name: 'Delete account' });
+  await expect(go).toBeDisabled();
+  await page.getByLabel('Type DELETE to confirm').fill('delete');
+  await expect(go).toBeDisabled();
+  await page.getByLabel('Type DELETE to confirm').fill('DELETE');
+  await go.click();
+  await page.waitForURL('/welcome');
+  expect(st.accountDeleted).toBe(true);
+});
+
+test('account deletion cancel changes nothing', async ({ page }) => {
+  const st = await installFake(page);
+  await page.goto('/account');
+  await page.getByRole('button', { name: 'Delete my account' }).click();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  expect(st.accountDeleted).toBe(false);
+});
+
+test('legal pages are marked draft and the usage page links to the account page', async ({ page }) => {
+  await installFake(page);
+  for (const path of ['/privacy', '/terms']) { await page.goto(path); await expect(page.getByRole('note')).toContainText('Draft'); await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1); }
+  await page.goto('/usage');
+  await page.getByRole('link', { name: /Account, privacy and terms/ }).click();
+  await expect(page).toHaveURL(/\/account$/);
 });

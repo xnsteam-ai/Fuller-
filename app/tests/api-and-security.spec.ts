@@ -41,3 +41,16 @@ const payloads = [
 test('SEC-1 sanitiser strips scripts, handlers and external loads', () => {
   for (const p of payloads) expect(sanitizeScreen(p), p).not.toMatch(/<script|onerror|onload|javascript:|<iframe|evil\.example|url\(|@import|action=/i);
 });
+
+test('API-5 account deletion needs auth/config and cannot be triggered unauthenticated', async ({ page }) => {
+  const r = await page.request.delete('/api/account', { data: { confirm: 'DELETE' }, headers: { 'x-forwarded-for': ipFor(page) } });
+  expect([401, 503]).toContain(r.status());
+});
+
+test('OG image is served as a 1200x630 PNG', async ({ page }) => {
+  const r = await page.request.get('/opengraph-image');
+  expect(r.status()).toBe(200);
+  expect(r.headers()['content-type']).toContain('image/png');
+  const b = await r.body();
+  expect(b.readUInt32BE(16)).toBe(1200); expect(b.readUInt32BE(20)).toBe(630);
+});

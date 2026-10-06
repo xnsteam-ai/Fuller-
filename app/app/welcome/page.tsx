@@ -87,6 +87,10 @@ export default function Welcome() {
           <Link href="/new" className={`${btn} mt-4 w-full sm:w-auto`}>Start designing</Link>
         </section>
       </main>
+      <footer className="flex gap-4 border-t border-border pt-4 text-sm">
+        <Link href="/privacy" className="flex min-h-tap items-center underline">Privacy</Link>
+        <Link href="/terms" className="flex min-h-tap items-center underline">Terms</Link>
+      </footer>
     </div>
   );
 }
