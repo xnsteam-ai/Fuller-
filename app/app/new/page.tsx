@@ -2,8 +2,6 @@
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 import { Shell } from '@/components/Shell';
-import { saveProject } from '@/lib/store';
-import { supabaseConfigured } from '@/lib/supabase/config';
 import type { Device } from '@/lib/types';
 
 const MAX = 4000;
@@ -26,10 +24,7 @@ export default function NewProject() {
       const data = await res.json();
       if (res.status === 401) { router.push('/sign-in'); return; }
       if (!res.ok) throw new Error(data.error || 'Generation failed.');
-      if (supabaseConfigured) { router.push(`/p/${data.projectId}`); return; }
-      const id = crypto.randomUUID();
-      saveProject({ id, name: prompt.trim().slice(0, 50), device, prompt, screens: data.screens, updatedAt: Date.now() });
-      router.push(`/p/${id}`);
+      router.push(`/p/${data.projectId}`); return;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong.'); setBusy(false); keyRef.current = crypto.randomUUID();
     }

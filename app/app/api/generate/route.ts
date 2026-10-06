@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getProvider } from '@/lib/ai/provider';
+import { getProvider, aiConfigured } from '@/lib/ai/provider';
 import { sanitizeScreen } from '@/lib/sanitize';
 import { supabaseConfigured } from '@/lib/supabase/config';
 import { supabaseServer, supabaseAdmin } from '@/lib/supabase/server';
@@ -27,16 +27,8 @@ export async function POST(req: Request) {
   const group = mode === 'standard' ? 'standard' : 'experimental';
   const limit = Number(group === 'standard' ? process.env.QUOTA_STANDARD ?? 350 : process.env.QUOTA_EXPERIMENTAL ?? 50);
 
-  // Accounts off: slice behaviour, client saves to localStorage.
-  if (!supabaseConfigured) {
-    try {
-      const raw = await getProvider().generate({ prompt, device, mode });
-      return NextResponse.json({ screens: raw.map((s, i) => ({ id: `s${i + 1}`, title: s.title.slice(0, 60), html: sanitizeScreen(s.html) })) });
-    } catch (e) {
-      console.error('generate failed', e instanceof Error ? e.message : e);
-      return NextResponse.json({ error: 'Generation failed. Try again.' }, { status: 502 });
-    }
-  }
+  if (!supabaseConfigured || !process.env.SUPABASE_SERVICE_ROLE_KEY || !aiConfigured())
+    return NextResponse.json({ error: 'The service is not configured yet.' }, { status: 503 });
 
   const sb = await supabaseServer();
   const { data: { user } } = await sb.auth.getUser();

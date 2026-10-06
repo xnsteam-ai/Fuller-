@@ -27,3 +27,9 @@ in this session. With no env set the app runs on the mock provider and localStor
 - [~] `npm audit`: high advisories in tailwind 3's build-time dependencies (braces/micromatch). Dev tooling only, not shipped; fix is a Tailwind 4 migration.
 - [ ] privacy policy: not written (processors: Supabase, Google Cloud/Gemini, host)
 - [ ] Google OAuth consent screen: basic sign-in scopes only; unverified-app limits apply until published.
+
+## Update: mock removed
+The mock provider and localStorage store are deleted. Every path now needs real Supabase and Gemini settings.
+Without them: `/api/generate` answers 503, `/api/projects*` answer 501, and screens show an explicit "not configured" message.
+Still unverified live: Google sign-in, RLS isolation between two users, Gemini output, quota, idempotency.
+Also fixed: favicon 404, stricter sanitiser (strips url()/@import), CSP meta inside preview iframes.

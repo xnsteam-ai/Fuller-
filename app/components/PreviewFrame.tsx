@@ -12,7 +12,8 @@ export function PreviewFrame({ html, title, height = 720 }: { html: string; titl
     ro.observe(el); setScale(Math.min(1, el.clientWidth / BASE));
     return () => ro.disconnect();
   }, []);
-  const doc = `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=${BASE}"><body style="margin:0;min-height:${height}px">${html}</body>`;
+  const CSP = "default-src 'none'; style-src 'unsafe-inline'; img-src data:; font-src data:";
+  const doc = `<!doctype html><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="${CSP}"><meta name="viewport" content="width=${BASE}"><body style="margin:0;min-height:${height}px">${html}</body>`;
   return (
     <div ref={box} className="w-full max-w-full overflow-hidden rounded-lg border border-border bg-bg" style={{ height: height * scale }}>
       <iframe title={`Preview: ${title}`} sandbox="" srcDoc={doc} loading="lazy"

@@ -19,7 +19,7 @@ export default function SignIn() {
           {err && <p role="alert" className="text-danger">{err}</p>}
         </div>
       ) : (
-        <p className="rounded-md border border-border bg-surface p-4">Accounts are off: no Supabase settings found. Projects are saved on this device only. See .env.example to turn accounts on.</p>
+        <p className="rounded-md border border-border bg-surface p-4">Sign-in is unavailable: Supabase settings are missing. See app/.env.example.</p>
       )}
     </Shell>
   );
