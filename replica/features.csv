@@ -9,9 +9,9 @@ Direct manual edits,edit,should,yes,partial,text-only editing; no colour or spac
 Variants,edit,could,yes,partial,"3 variants, pick one; not run live"
 Mode picker (4 modes),generate,could,yes,partial,maps to Gemini model env vars; not run live
 Voice critique,voice,could,yes,partial,browser speech-to-text fills the prompt; no spoken replies
-DESIGN.md design system,design system,should,yes,partial,"generate, edit, save, export; new generations do not yet read it"
+DESIGN.md design system,design system,should,yes,partial,"generate, edit, save, export; used by first generation (optional field), refine and variants; not run live"
 Export HTML/CSS,export,must,yes,partial,one HTML file with all screens; not tested against real data
-Export Tailwind,export,should,yes,no,
+Export Tailwind,export,should,yes,partial,"inline styles -> Tailwind classes, verified to render identically (computed styles); preview needs Tailwind CDN; not tested on real model output"
 Figma paste,export,could,yes,skip,Proprietary clipboard format
 Other frameworks (Vue Angular Flutter SwiftUI),export,could,yes,no,
 MCP server,integration,could,yes,no,

@@ -1,12 +1,12 @@
-## Parity: 48.7 / 100
+## Parity: 51.3 / 100
 
-features 48.7  (18 counted, must-haves 1 of 7 done)
+features 51.3  (18 counted, must-haves 1 of 7 done)
 
 Not shippable yet: 6 must-have features are not done.
 
 ## By area, weakest first
 - integration                    0.0  (1 features)
-- export                        25.0  (3 features)
+- export                        41.7  (3 features)
 - auth                          50.0  (1 features)
 - generate                      50.0  (5 features)
 - edit                          50.0  (3 features)
@@ -23,10 +23,10 @@ Not shippable yet: 6 must-have features are not done.
 - [must] generate: Mobile and web device target, partial  (toggle sent to provider; web layout not tuned)
 - [must] generate: Text prompt to UI, partial  (real Gemini call written, not run live)
 - [must] projects: Project list, partial  (Supabase-backed; rename and delete built; not run live)
-- [should] export: Export Tailwind, no
 - [should] billing: Monthly usage limits, partial  (usage page + atomic quota in DB; not run live)
-- [should] design system: DESIGN.md design system, partial  (generate, edit, save, export; new generations do not yet read it)
+- [should] design system: DESIGN.md design system, partial  (generate, edit, save, export; used by first generation (optional field), refine and variants; not run live)
 - [should] edit: Direct manual edits, partial  (text-only editing; no colour or spacing editing)
+- [should] export: Export Tailwind, partial  (inline styles -> Tailwind classes, verified to render identically (computed styles); preview needs Tailwind CDN; not tested on real model output)
 - [should] generate: Image/sketch to UI, partial  (attach PNG/JPEG/WebP up to 3 MB, sent inline; not run live)
 - [should] generate: Up to 5 connected screens, partial  (model asked for 1-5 screens; consistency not verified live)
 - [could] export: Other frameworks (Vue Angular Flutter SwiftUI), no
@@ -57,6 +57,6 @@ Not shippable yet: 6 must-have features are not done.
 ## Top five next
 1. Supply credentials and run the real services: sign-in, generation, quota, refine (turns most `partial` rows into `yes` or exposes failures).
 2. Test row-level security with two users.
-3. Feed DESIGN.md into the first generation, not only refine and variants.
-4. Tailwind export (should-have, currently `no`).
+3. ~~Feed DESIGN.md into the first generation~~ done (optional field on the create screen).
+4. ~~Tailwind export~~ done (partial: verified on sample markup, not on real model output).
 5. Get real Stitch screenshots from your own account so the layout diff and recon can be checked.

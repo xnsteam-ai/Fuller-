@@ -4,6 +4,7 @@ import { Shell } from '@/components/Shell';
 
 const ROWS = [
   { fmt: 'html', title: 'HTML', desc: 'One file with every screen' },
+  { fmt: 'tailwind', title: 'HTML with Tailwind', desc: 'Same screens as Tailwind classes. Preview loads Tailwind from its CDN, so it needs internet.' },
   { fmt: 'designmd', title: 'DESIGN.md', desc: 'Your design system notes' },
 ] as const;
 
@@ -35,7 +36,7 @@ export default function Export({ params }: { params: Promise<{ id: string }> }) 
         ))}
       </ul>
       <div role="status" aria-live="polite" className="mt-3 min-h-5 text-sm">{msg && <span className={msg === 'Copied.' ? 'text-success' : 'text-danger'}>{msg}</span>}</div>
-      <p className="mt-4 text-sm text-text-muted">Tailwind and framework exports are not available yet.</p>
+      <p className="mt-4 text-sm text-text-muted">Other frameworks (Vue, Angular, Flutter, SwiftUI) are not available yet.</p>
     </Shell>
   );
 }

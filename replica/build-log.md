@@ -13,3 +13,9 @@
 - Bugs found by tests and fixed: MicButton hydration mismatch (React #418); speech constructor passed to setState was called as an updater.
 - Tests: 32 Playwright tests pass. UI tests use a network-level test double (tests/fake-backend.ts), so they check wiring only, not the real routes, RLS or Gemini.
 - Known gaps: Tailwind/framework export, MCP, spoken voice replies, colour/spacing edit, DESIGN.md is not yet fed to new generations in /api/generate (refine, variants use it), keyboard-only pass on the new screens, 1440px pass, screenshots.
+
+## Update: DESIGN.md on first generation, Tailwind export
+- Create screen has an optional "Design system" field (max 20000) sent to the first generation and saved on the project.
+- Tailwind export: lib/tailwind.ts converts inline styles to utilities (arbitrary-property classes for the rest). Test renders original and converted markup and compares computed styles for 26 properties: identical on the sample. Declarations with !important or unsafe characters stay inline. <style> blocks untouched. Download needs the Tailwind CDN script to preview.
+- Bug fixed: prompt counter said "too long" when only the design-system text was over its limit.
+- Tests: 39 Playwright tests pass.

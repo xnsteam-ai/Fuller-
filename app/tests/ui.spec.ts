@@ -112,7 +112,8 @@ test('S10 export: download links and copy', async ({ page, context }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   await installFake(page);
   await page.goto('/p/p1/export');
-  await expect(page.getByRole('link', { name: 'Download' })).toHaveCount(2);
+  await expect(page.getByRole('link', { name: 'Download' })).toHaveCount(3);
+  await expect(page.getByRole('link', { name: 'Download' }).nth(1)).toHaveAttribute('href', '/api/projects/p1/export?fmt=tailwind');
   await expect(page.getByRole('link', { name: 'Download' }).first()).toHaveAttribute('href', '/api/projects/p1/export?fmt=html');
   await page.getByRole('button', { name: 'Copy' }).first().click();
   await expect(page.getByRole('status')).toContainText('Copied.');
@@ -202,4 +203,34 @@ test('axe: no WCAG A/AA violations on the new screens', async ({ page }) => {
     const r = await new AxeBuilder({ page }).exclude('iframe').withTags(['wcag2a', 'wcag2aa']).analyze(); // iframes hold generated content, sandboxed
     expect(r.violations.map((v) => `${path}: ${v.id} -> ${v.nodes[0]?.html?.slice(0, 80)}`), path).toEqual([]);
   }
+});
+
+test('S02 design system text is sent with the first generation and capped', async ({ page }) => {
+  const st = await installFake(page);
+  await page.goto('/new');
+  await page.getByLabel('Describe your app screen').fill('A budgeting app');
+  await page.getByText('Design system (optional)').click();
+  await page.getByLabel('DESIGN.md').fill('# Colors\n- primary #4f46e5');
+  await page.getByRole('button', { name: 'Generate' }).click();
+  await page.waitForURL('/p/p1');
+  expect(st.calls.find((x) => x.url === '/api/generate')!.body.designMd).toBe('# Colors\n- primary #4f46e5');
+});
+
+test('S02 over-long design system blocks submit', async ({ page }) => {
+  await installFake(page);
+  await page.goto('/new');
+  await page.getByLabel('Describe your app screen').fill('x');
+  await page.getByText('Design system (optional)').click();
+  await page.getByLabel('DESIGN.md').fill('a'.repeat(20001));
+  await expect(page.getByRole('button', { name: 'Generate' })).toBeDisabled();
+  await expect(page.getByText(/too long/)).toBeVisible();
+});
+
+test('S02 without a design system, none is sent', async ({ page }) => {
+  const st = await installFake(page);
+  await page.goto('/new');
+  await page.getByLabel('Describe your app screen').fill('plain');
+  await page.getByRole('button', { name: 'Generate' }).click();
+  await page.waitForURL('/p/p1');
+  expect(st.calls.find((x) => x.url === '/api/generate')!.body.designMd).toBeUndefined();
 });

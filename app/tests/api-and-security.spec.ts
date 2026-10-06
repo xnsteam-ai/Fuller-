@@ -12,6 +12,7 @@ test('API-1 rejects bad input with 400 before touching any service', async ({ pa
   expect((await post(page, { prompt: 'x'.repeat(4001) })).status()).toBe(400);
   expect((await post(page, { prompt: 42 })).status()).toBe(400);
   expect((await post(page, null as any, true)).status()).toBe(400);
+  expect((await post(page, { prompt: 'x', designMd: 'a'.repeat(20001) })).status()).toBe(400);
 });
 
 test('API-2 rate limit returns 429 after 10 requests a minute', async ({ page }) => {

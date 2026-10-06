@@ -19,6 +19,8 @@ export async function POST(req: Request) {
   const mode = parseMode(body?.mode);
   const group = groupOf(mode);
   const limit = limitOf(group);
+  const designMd = typeof body?.designMd === 'string' ? body.designMd : '';
+  if (designMd.length > 20000) return NextResponse.json({ error: 'DESIGN.md is too long (20000 max).' }, { status: 400 });
   let image: { mime: string; data: string } | undefined;
   if (body?.image) {
     const { mime, data } = body.image;
@@ -48,12 +50,12 @@ export async function POST(req: Request) {
 
   let projectId: string | null = null;
   try {
-    const { data: project, error: pErr } = await sb.from('projects').insert({ user_id: user.id, name: prompt.slice(0, 50), device }).select('id').single();
+    const { data: project, error: pErr } = await sb.from('projects').insert({ user_id: user.id, name: prompt.slice(0, 50), device, design_md: designMd }).select('id').single();
     if (pErr || !project) throw new Error('project insert failed');
     projectId = project.id;
     const { data: gen, error: gErr } = await admin.from('generations').insert({ user_id: user.id, project_id: projectId, idempotency_key: key, mode, prompt, status: 'running' }).select('id').single();
     if (gErr || !gen) throw new Error('generation insert failed');
-    const raw = await getProvider().generate({ prompt, device, mode, image });
+    const raw = await getProvider().generate({ prompt, device, mode, image, designMd: designMd || undefined });
     for (let i = 0; i < raw.length; i++) {
       const { data: screen, error: sErr } = await admin.from('screens').insert({ user_id: user.id, project_id: projectId, position: i, title: raw[i].title.slice(0, 60) }).select('id').single();
       if (sErr || !screen) throw new Error('screen insert failed');
