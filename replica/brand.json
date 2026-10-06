@@ -1,0 +1,6 @@
+{
+  "avoid": ["Stitch", "Google Stitch"],
+  "domains": ["stitch.withgoogle.com", "withgoogle.com"],
+  "colors": ["#4285f4", "#1a73e8", "#ea4335", "#fbbc04", "#34a853"],
+  "_note": "The original's real brand colours were not observed (site blocked). The Google palette above is a guess to catch obvious carry-over. Add the real values once you have screenshots."
+}

@@ -26,7 +26,7 @@ export default function Home() {
       {status === 'ok' && projects?.length === 0 && (
         <div className="rounded-lg border border-border bg-surface p-6 text-center">
           <h2 className="text-lg font-semibold">Nothing here yet</h2>
-          <p className="mt-1 text-text-muted">Describe a screen and see it appear in seconds.</p>
+          <p className="mt-1 text-text-muted">Say what you want to see. A first design lands in seconds.</p>
           <Link href="/new" className="mt-4 inline-flex min-h-tap items-center rounded-md bg-accent px-5 font-semibold text-on-accent">Start a project</Link>
         </div>
       )}

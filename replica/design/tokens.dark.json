@@ -6,7 +6,7 @@
     "border-input": "#7d8696",
     "text": "#eceef2",
     "text-muted": "#a3acb9",
-    "accent": "#8b93ff",
+    "accent": "#5eead4",
     "on-accent": "#0f1115",
     "danger": "#ff8a8a",
     "success": "#5fd39a",
@@ -117,7 +117,7 @@
     "base": "200ms",
     "ease": "cubic-bezier(.2,.8,.2,1)"
   },
-  "_about": "Stitch clone tokens. Neutral placeholder accent; /replica-brand replaces values, names stay.",
+  "_about": "Brand tokens for Thumbframe (provisional name). Names stay, values change.",
   "layout": {
     "tap-min": 44,
     "header": 56,

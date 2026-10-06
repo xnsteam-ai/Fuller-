@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import { APP_NAME, APP_TAGLINE } from '@/lib/brand';
 
-export const metadata: Metadata = { title: 'Screen Studio', description: 'Describe an app screen, get a design you can refine and export.' };
+export const metadata: Metadata = { title: APP_NAME, description: APP_TAGLINE };
 export const viewport: Viewport = { width: 'device-width', initialScale: 1, viewportFit: 'cover' };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
