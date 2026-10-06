@@ -11,7 +11,7 @@ const noHScroll = async (page: Page, label: string) => {
 for (const w of [320, 360, 390, 430]) {
   test(`no horizontal scroll at ${w}px`, async ({ page }) => {
     await page.setViewportSize({ width: w, height: 800 });
-    for (const path of ['/', '/new', '/sign-in', '/p/x']) { await page.goto(path); await page.waitForLoadState('networkidle'); await noHScroll(page, path); }
+    for (const path of ['/', '/new', '/sign-in', '/p/x', '/welcome']) { await page.goto(path); await page.waitForLoadState('networkidle'); await noHScroll(page, path); }
     await page.goto('/new');
     await page.getByLabel('Describe your app screen').fill('Averyveryverylongwordwithoutanyspacesthatkeepsgoingandgoing '.repeat(3));
     await noHScroll(page, '/new long text');

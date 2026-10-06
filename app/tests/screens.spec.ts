@@ -23,7 +23,7 @@ test('unknown project id shows not-found', async ({ page }) => {
 });
 
 test('axe: no WCAG A/AA violations on S01 S02 S13', async ({ page }) => {
-  for (const [path, label] of [['/', 'S01'], ['/new', 'S02'], ['/sign-in', 'S13']]) {
+  for (const [path, label] of [['/', 'S01'], ['/new', 'S02'], ['/sign-in', 'S13'], ['/welcome', 'welcome']]) {
     await page.goto(path); await page.waitForLoadState('networkidle');
     const r = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze();
     expect(r.violations.map((v) => `${label}: ${v.id}`), label).toEqual([]);
@@ -35,4 +35,16 @@ test('controls are at least 44px tall', async ({ page }) => {
   await page.goto('/new');
   for (const loc of [page.getByRole('button', { name: 'mobile' }), page.getByRole('button', { name: 'web' }), page.getByRole('link', { name: 'Projects' }), page.getByRole('link', { name: 'Create' })])
     expect((await loc.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+});
+
+test('welcome: one h1, CTA leads to the create screen, no fake proof', async ({ page }) => {
+  await page.goto('/welcome');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+  await page.getByRole('link', { name: 'Start designing' }).first().click();
+  await expect(page).toHaveURL(/\/new$/);
+  await page.goto('/welcome');
+  const text = await page.locator('main').innerText();
+  expect(text).not.toMatch(/testimonial|trusted by|\d+ ?\+? (users|teams|designers)|\d(\.\d)?\s?(\/5|stars)/i);
+  await page.getByText('What does it cost?').click();
+  await expect(page.getByText(/Pricing will be announced/).first()).toBeVisible();
 });
